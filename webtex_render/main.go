@@ -7,16 +7,24 @@ import (
 	"text/template"
 )
 
+const VERSION = "v23.0"
+
 func main() {
 	var config Config
-	var inputFilename = flag.String("input", "-", "input file or - for stdin")
-	var outputFilename = flag.String("output", "-", "output file or - for stdout")
-	var equationDirectory = flag.String("eqdir", "equations", "directory to output equations")
-	var inputUrl = flag.String("inurl", "eqn://", "input webtex URL prefix")
-	var outputUrl = flag.String("outurl", "equations", "image src root")
-	var templateFilename = flag.String("template", "", "TeX template file")
-	var onlyInner = flag.Bool("innerhtml", false, "export only inner HTML of the result (without <html><body> tags)")
+	inputFilename := flag.String("input", "-", "input file or - for stdin")
+	outputFilename := flag.String("output", "-", "output file or - for stdout")
+	equationDirectory := flag.String("eqdir", "equations", "directory to output equations")
+	inputUrl := flag.String("inurl", "eqn://", "input webtex URL prefix")
+	outputUrl := flag.String("outurl", "equations", "image src root")
+	templateFilename := flag.String("template", "", "TeX template file")
+	onlyInner := flag.Bool("innerhtml", false, "export only inner HTML of the result (without <html><body> tags)")
+	version := flag.Bool("version", false, "prints current roxy version")
 	flag.Parse()
+
+	if *version {
+		log.Printf("WebTeX Render version %v\n", VERSION)
+		os.Exit(0)
+	}
 
 	var err error
 	if *inputFilename == "-" {
