@@ -7,7 +7,7 @@ import (
 	"text/template"
 )
 
-const VERSION = "v23.0"
+const VERSION = "v23.1"
 
 func main() {
 	var config Config
