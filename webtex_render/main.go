@@ -15,6 +15,7 @@ func main() {
 	var inputUrl = flag.String("inurl", "eqn://", "input webtex URL prefix")
 	var outputUrl = flag.String("outurl", "equations", "image src root")
 	var templateFilename = flag.String("template", "", "TeX template file")
+	var onlyInner = flag.Bool("innerhtml", false, "export only inner HTML of the result (without <html><body> tags)")
 	flag.Parse()
 
 	var err error
@@ -41,6 +42,7 @@ func main() {
 	config.EquationDirectory = *equationDirectory
 	config.InputURL = *inputUrl
 	config.OutputURL = *outputUrl
+	config.OnlyInnerHTML = *onlyInner
 
 	if *templateFilename == "" {
 		log.Println("please provide a template file.")

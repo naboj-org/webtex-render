@@ -31,7 +31,13 @@ func parseHtml(config Config) error {
 		s.SetAttr("src", sha)
 	})
 
-	html, err := doc.Html()
+	var toExport *goquery.Selection
+	if config.OnlyInnerHTML {
+		toExport = doc.Find("body")
+	} else {
+		toExport = doc.Selection
+	}
+	html, err := toExport.Html()
 	if err != nil {
 		log.Println("failed generating output html:", err)
 		return err

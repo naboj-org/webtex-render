@@ -12,4 +12,5 @@ type Config struct {
 	InputURL          string
 	OutputURL         string
 	Template          *template.Template
+	OnlyInnerHTML     bool
 }
