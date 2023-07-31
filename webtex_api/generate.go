@@ -1,4 +1,4 @@
-package main
+package webtex_api
 
 import (
 	"crypto/sha1"
@@ -9,13 +9,14 @@ import (
 	"log"
 	"os"
 	"path"
+	"text/template"
 )
 
 type TemplateContext struct {
 	Equation string
 }
 
-func generateSvg(config Config, equation, filename string) error {
+func generateSvg(template *template.Template, equation, filename string) error {
 	dir, err := os.MkdirTemp("", "webtex_render")
 	if err != nil {
 		return err
@@ -28,7 +29,7 @@ func generateSvg(config Config, equation, filename string) error {
 		return err
 	}
 
-	err = config.Template.Execute(file, TemplateContext{Equation: equation})
+	err = template.Execute(file, TemplateContext{Equation: equation})
 	if err != nil {
 		log.Println("executing in.tex template failed:", err)
 		return err
@@ -73,18 +74,19 @@ func generateSvg(config Config, equation, filename string) error {
 	return err
 }
 
-func EquationSvg(config Config, equation string) (string, error) {
+func EquationSvg(equation string, cacheDir string, template *template.Template) (string, error) {
 	h := sha1.New()
 	h.Write([]byte(equation))
 	sha := hex.EncodeToString(h.Sum(nil))
-	filename := path.Join(config.EquationDirectory, sha[0:2], fmt.Sprintf("%s.svg", sha))
+	filenameEnd := path.Join(sha[0:2], fmt.Sprintf("%s.svg", sha))
+	filename := path.Join(cacheDir, filenameEnd)
 
 	if _, err := os.Stat(filename); err == nil {
-		return filename, nil
+		return filenameEnd, nil
 	} else if errors.Is(err, os.ErrNotExist) {
 		// Generate
-		err := generateSvg(config, equation, filename)
-		return filename, err
+		err := generateSvg(template, equation, filename)
+		return filenameEnd, err
 	} else {
 		return "", err
 	}

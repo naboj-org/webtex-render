@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/PuerkitoBio/goquery"
+	"github.com/naboj-org/webtex-render/webtex_api"
 	"log"
 	"net/url"
+	"path"
 	"strings"
 )
 
@@ -27,8 +29,13 @@ func parseHtml(config Config) error {
 			return
 		}
 
-		sha, err := EquationSvg(config, src)
-		s.SetAttr("src", sha)
+		filepath, err := webtex_api.EquationSvg(src, config.EquationDirectory, config.Template)
+		if err != nil {
+			log.Println("failed generating:", err)
+			return
+		}
+		filepath = path.Join(config.OutputURL, filepath)
+		s.SetAttr("src", filepath)
 	})
 
 	var toExport *goquery.Selection
