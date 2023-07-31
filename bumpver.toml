@@ -7,7 +7,7 @@ tag = true
 push = true
 
 [bumpver.file_patterns]
-"webtex_render/main.go" = [
+"webtex_api/version.go" = [
     'const VERSION = "{version}"',
 ]
 "bumpver.toml" = [

@@ -15,7 +15,7 @@ import (
 var Renderers RendererMap
 
 func getRoot(c *gin.Context) {
-	c.String(http.StatusOK, "https://github.com/naboj-org/webtex-render")
+	c.String(http.StatusOK, "https://github.com/naboj-org/webtex-render %s", webtex_api.VERSION)
 }
 
 func getRender(c *gin.Context) {

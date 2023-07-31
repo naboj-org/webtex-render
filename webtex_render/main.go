@@ -2,12 +2,11 @@ package main
 
 import (
 	"flag"
+	"github.com/naboj-org/webtex-render/webtex_api"
 	"log"
 	"os"
 	"text/template"
 )
-
-const VERSION = "v23.1"
 
 func main() {
 	var config Config
@@ -22,7 +21,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		log.Printf("WebTeX Render version %v\n", VERSION)
+		log.Printf("WebTeX Render version %v\n", webtex_api.VERSION)
 		os.Exit(0)
 	}
 
