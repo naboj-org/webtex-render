@@ -9,6 +9,8 @@
 WebTeX Render is a simple program used to generate static images from LaTeX equations. It was designed to be used as
 an alternative to <https://latex.codecogs.com/>. It also allows you to use arbitrary LaTeX packages in your images.
 
+We also provide a simple web API to generate images on demand.
+
 ## Usage
 
 ```shell
@@ -30,6 +32,19 @@ img.math.inline {
 }
 ```
 
+## Using the web API
+
+The `webtex_web` requires a configuration file to define "renderers".
+
+```yaml
+- name: render_name
+  key: secret
+  template: template.tex
+```
+
+The TeX image can be then generated at URL `http://...:8080/render/render_name/?eq=EQUATION&sig=SIGNATURE`.
+`EQUATION` should be a base64 encoded TeX. `SIGNATURE` should be a HMAC-SHA-256 of the `EQUATION` using the key from config.
+
 ## Minimal template
 
 ```tex
@@ -50,4 +65,19 @@ the document to make sure that all output files are at least `1em` high.
 
 ```shell
 go build -o wr ./webtex_render
+go build -o wr_web ./webtex_web
 ```
+
+## Docker image
+
+We also provide a Docker image. The image contains both `wr` and `wr_web` binaries, but is set up to start the web
+API by default.
+
+```shell
+docker run --rm \
+  -v ./config.yml:/app/config.yml:ro \
+  -v ./template.tex:/app/template.tex:ro \
+  -p 8080:8080 \
+  ghcr.io/naboj-org/webtex_render
+```
+
