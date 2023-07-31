@@ -63,6 +63,8 @@ func main() {
 		panic(err)
 	}
 
+	gin.SetMode(gin.ReleaseMode)
+
 	r := gin.Default()
 	r.GET("/", getRoot)
 	r.GET("/render/:renderer/", getRender)
