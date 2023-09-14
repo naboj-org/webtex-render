@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/naboj-org/webtex-render/webtex_api"
 	"gopkg.in/yaml.v3"
 	"os"
 	"path"
@@ -8,11 +9,13 @@ import (
 )
 
 type Renderer struct {
-	Name         string             `yaml:"name"`
-	Key          string             `yaml:"key"`
-	TemplatePath string             `yaml:"template"`
-	Template     *template.Template `yaml:"-"`
-	CacheDir     string             `yaml:"-"`
+	Name         string               `yaml:"name"`
+	Key          string               `yaml:"key"`
+	TemplatePath string               `yaml:"template"`
+	Template     *template.Template   `yaml:"-"`
+	CacheDir     string               `yaml:"-"`
+	Engine       webtex_api.TexEngine `yaml:"-"`
+	EngineString string               `yaml:"engine"`
 }
 
 type RendererMap map[string]Renderer
@@ -37,6 +40,11 @@ func loadConfig(fileName string) (RendererMap, error) {
 
 		renderer.CacheDir = path.Join("cache", renderer.Name)
 		err := os.MkdirAll(renderer.CacheDir, 0755)
+		if err != nil {
+			return nil, err
+		}
+
+		renderer.Engine, err = webtex_api.GetEngine(renderer.EngineString)
 		if err != nil {
 			return nil, err
 		}

@@ -46,7 +46,7 @@ func getRender(c *gin.Context) {
 		return
 	}
 
-	outputPath, err := webtex_api.EquationSvg(string(equation), renderer.CacheDir, renderer.Template)
+	outputPath, err := webtex_api.EquationSvg(string(equation), renderer.CacheDir, renderer.Template, renderer.Engine)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "error generating equation")
 		log.Printf("Error while generating: %v\n", err)

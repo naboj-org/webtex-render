@@ -16,7 +16,7 @@ type TemplateContext struct {
 	Equation string
 }
 
-func generateSvg(template *template.Template, equation, filename string) error {
+func generateSvg(template *template.Template, equation, filename string, engine TexEngine) error {
 	dir, err := os.MkdirTemp("", "webtex_render")
 	if err != nil {
 		return err
@@ -40,7 +40,7 @@ func generateSvg(template *template.Template, equation, filename string) error {
 		return err
 	}
 
-	err = runTex(dir)
+	err = runTex(dir, engine)
 	if err != nil {
 		return err
 	}
@@ -74,7 +74,7 @@ func generateSvg(template *template.Template, equation, filename string) error {
 	return err
 }
 
-func EquationSvg(equation string, cacheDir string, template *template.Template) (string, error) {
+func EquationSvg(equation string, cacheDir string, template *template.Template, engine TexEngine) (string, error) {
 	h := sha1.New()
 	h.Write([]byte(equation))
 	sha := hex.EncodeToString(h.Sum(nil))
@@ -85,7 +85,7 @@ func EquationSvg(equation string, cacheDir string, template *template.Template) 
 		return filenameEnd, nil
 	} else if errors.Is(err, os.ErrNotExist) {
 		// Generate
-		err := generateSvg(template, equation, filename)
+		err := generateSvg(template, equation, filename, engine)
 		return filenameEnd, err
 	} else {
 		return "", err

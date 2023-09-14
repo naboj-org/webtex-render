@@ -29,7 +29,7 @@ func parseHtml(config Config) error {
 			return
 		}
 
-		filepath, err := webtex_api.EquationSvg(src, config.EquationDirectory, config.Template)
+		filepath, err := webtex_api.EquationSvg(src, config.EquationDirectory, config.Template, config.Engine)
 		if err != nil {
 			log.Println("failed generating:", err)
 			return
