@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/naboj-org/webtex-render/webtex_api"
 	"log"
@@ -16,27 +17,31 @@ func parseHtml(config Config) error {
 		return err
 	}
 
+	var toProcess []*goquery.Selection
+
 	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		toProcess = append(toProcess, s)
+	})
+
+	for _, s := range toProcess {
 		src, _ := s.Attr("src")
 		if !strings.HasPrefix(src, config.InputURL) {
-			return
+			continue
 		}
 
 		src = strings.TrimPrefix(src, config.InputURL)
 		src, err := url.QueryUnescape(src)
 		if err != nil {
-			log.Println("failed query unescaping:", err)
-			return
+			return fmt.Errorf("failed to unescape query string: %w", err)
 		}
 
 		filepath, err := webtex_api.EquationSvg(src, config.EquationDirectory, config.Template, config.Engine)
 		if err != nil {
-			log.Println("failed generating:", err)
-			return
+			return fmt.Errorf("failed generation of '%s': %w", src, err)
 		}
 		filepath = path.Join(config.OutputURL, filepath)
 		s.SetAttr("src", filepath)
-	})
+	}
 
 	var toExport *goquery.Selection
 	if config.OnlyInnerHTML {
