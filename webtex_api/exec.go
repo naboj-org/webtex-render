@@ -8,21 +8,16 @@ import (
 	"strings"
 )
 
-type TexEngine string
-
-const (
-	TEX_LUALATEX TexEngine = "lualatex"
-	TEX_XELATEX  TexEngine = "xelatex"
-)
-
 func GetEngine(engine string) (TexEngine, error) {
 	switch strings.ToLower(engine) {
 	case "xelatex":
-		return TEX_XELATEX, nil
+		return XeLaTeXEngine{}, nil
 	case "lualatex":
-		return TEX_LUALATEX, nil
+		return LuaLaTeXEngine{}, nil
+	case "tectonic":
+		return TectonicEngine{}, nil
 	default:
-		return "", fmt.Errorf("unknown engine '%s'", engine)
+		return nil, fmt.Errorf("unknown engine '%s'", engine)
 	}
 }
 
@@ -40,12 +35,15 @@ func execCommand(workdir, command string, arg ...string) (string, error) {
 
 // runTex starts latexmk to generate `render.dvi` from `in.tex` in a given directory
 func runTex(directory string, engine TexEngine) error {
-	output, err := execCommand(directory, "/usr/bin/latexmk", fmt.Sprintf("-%s", engine), "-norc", "-dvi", "-jobname=render", "in.tex")
+	command := engine.Command("in.tex")
+	output, err := execCommand(directory, command[0], command[1:]...)
 	if err != nil {
-		log.Println("latexmk failed:", err)
+		log.Println("latex failed:", err)
 		log.Println(output)
+		return err
 	}
-	return err
+
+	return engine.MoveOutput(directory, "in.tex", "render.dvi")
 }
 
 // convertDvi converts `render.dvi` to `rednder.svg` in a given directory
