@@ -1,3 +1,3 @@
 package webtex_api
 
-const VERSION = "v23.3"
+const VERSION = "v24.0"
