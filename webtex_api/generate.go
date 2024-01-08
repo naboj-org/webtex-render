@@ -78,7 +78,7 @@ func EquationSvg(equation string, cacheDir string, template *template.Template, 
 	h := sha1.New()
 	h.Write([]byte(equation))
 	sha := hex.EncodeToString(h.Sum(nil))
-	filenameEnd := path.Join(sha[0:2], fmt.Sprintf("%s.svg", sha))
+	filenameEnd := fmt.Sprintf("%s.svg", sha)
 	filename := path.Join(cacheDir, filenameEnd)
 
 	if _, err := os.Stat(filename); err == nil {
