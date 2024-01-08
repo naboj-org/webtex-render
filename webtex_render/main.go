@@ -15,7 +15,7 @@ func main() {
 	equationDirectory := flag.String("eqdir", "equations", "directory to output equations")
 	inputUrl := flag.String("inurl", "eqn://", "input webtex URL prefix")
 	outputUrl := flag.String("outurl", "equations", "image src root")
-	engine := flag.String("engine", "lualatex", "TeX engine")
+	engine := flag.String("engine", "lualatex*", "TeX engine")
 	templateFilename := flag.String("template", "", "TeX template file")
 	onlyInner := flag.Bool("innerhtml", false, "export only inner HTML of the result (without <html><body> tags)")
 	version := flag.Bool("version", false, "prints current roxy version")
@@ -52,6 +52,14 @@ func main() {
 	config.OutputURL = *outputUrl
 	config.OnlyInnerHTML = *onlyInner
 
+	if *engine == "lualatex*" {
+		*engine = "lualatex"
+		log.Println("-------------------------------------------------------------------------")
+		log.Println("The default engine will change in a future release of WebTeX Render")
+		log.Println("if you want to continue using 'lualatex', please specify -engine lualatex")
+		log.Println("in the command line arguments.")
+		log.Println("-------------------------------------------------------------------------")
+	}
 	config.Engine, err = webtex_api.GetEngine(*engine)
 	if err != nil {
 		panic(err)
